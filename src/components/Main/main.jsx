@@ -1,17 +1,21 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { Alert, Col, Container, Row } from "react-bootstrap"
-import DataTable from "../Database/database"
+import Axios from "axios"
+import DataTable from "../DataTable/dataTable"
 
-const main = () => {
-  const [mainData, setMainData] = useState([])
-  const [error, setError] = useState([])
+const Main = () => {
+  const [data, setMainData] = useState([])
+  const [filterData, setFilteredData] = useState([])
+  const [error, setError] = useState(null)
 
   const fetchData = async () => {
     try {
       const response = await Axios.get(
         "https://jsonplaceholder.typicode.com/users"
       )
+      console.log("Fetched Data:", response.data) // Log fetched data
       setMainData(response.data)
+      setFilteredData(response.data)
     } catch (err) {
       setError("Failed to fetch data")
       console.error(err)
@@ -43,11 +47,15 @@ const main = () => {
       </Row>
       <Row>
         <Col>
-          <DataTable></DataTable>
+          <DataTable
+            data={data}
+            filterData={filterData}
+            setFilteredData={setFilteredData}
+          ></DataTable>
         </Col>
       </Row>
     </Container>
   )
 }
 
-export default main
+export default Main

@@ -36,3 +36,41 @@
     transform: rotate(360deg);
   }
 }
+
+/* pagination */
+
+/* App.css */
+
+.container {
+  max-width: 1200px;
+}
+
+h1 {
+  color: #007bff;
+  font-size: 2.5rem;
+}
+
+.table th,
+.table td {
+  text-align: center;
+}
+
+.table th {
+  background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+.alert {
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 0.5rem;
+}
