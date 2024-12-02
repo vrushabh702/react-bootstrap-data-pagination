@@ -6,6 +6,7 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(0)
   const [sortDirection, setSortDirection] = useState(true)
+  const [error, setError] = useState(false)
 
   const itemPerPage = 5
 
@@ -16,6 +17,7 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
     const filtered = data.filter((item) =>
       item.name.toLowerCase().includes(term.toLowerCase())
     )
+    setError(filtered.length === 0 ? true : false)
     setFilteredData(filtered)
   }
 
@@ -45,11 +47,21 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
   )
   console.log("Current Items for Display:", currentItems)
 
+  const isVowel = (username) => {
+    const vowels = ["A", "E", "I", "O", "U"]
+    const firstLetter = username.charAt(0).toUpperCase()
+    return vowels.includes(firstLetter)
+  }
+
+  const oddEvenColor = (id) => {
+    return id % 2 === 0 ? "bg-success text-white" : "bg-danger text-white"
+  }
+
   return (
     <div>
       {/* search input */}
       <Row className="md-3">
-        <Col md={6}>
+        <Col md={12}>
           <Form.Control
             type="text"
             placeholder="search by name"
@@ -62,6 +74,7 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
       <Table striped bordered hover responsive>
         <thead>
           <tr>
+            <th>User-ID</th>
             <th>
               Name
               <Button onClick={handleSort} variant="link" size="sm">
@@ -74,14 +87,31 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
           </tr>
         </thead>
         <tbody>
-          {currentItems.map((item) => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>{item.username}</td>
-              <td>{item.email}</td>
-              <td>{item.phone}</td>
+          {error ? (
+            <tr>
+              <td colSpan="5" className="text-center text-danger">
+                <strong>No Data Found</strong>
+              </td>
             </tr>
-          ))}
+          ) : (
+            currentItems.map((item) => (
+              <tr key={item.id}>
+                <td className={oddEvenColor(item.id)}>{item.id}</td>
+                <td>{item.name}</td>
+                <td
+                  className={
+                    isVowel(item.username)
+                      ? "bg-danger text-white"
+                      : "bg-success text-white"
+                  }
+                >
+                  {item.username}
+                </td>
+                <td>{item.email}</td>
+                <td>{item.phone}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </Table>
 
