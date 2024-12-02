@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Form, Button, Row, Col, Table } from "react-bootstrap"
 import ReactPaginate from "react-paginate"
 
@@ -7,14 +7,18 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
   const [currentPage, setCurrentPage] = useState(0)
   const [sortDirection, setSortDirection] = useState(true)
   const [error, setError] = useState(false)
+  const [sortedData, setSortedData] = useState(data)
+  const itemPerPage = 2
 
-  const itemPerPage = 5
+  useEffect(() => {
+    setSortedData(data)
+  }, [data])
 
   const handleSearch = (e) => {
     const term = e.target.value
     setSearchTerm(term)
 
-    const filtered = data.filter((item) =>
+    const filtered = sortedData.filter((item) =>
       item.name.toLowerCase().includes(term.toLowerCase())
     )
     setError(filtered.length === 0 ? true : false)
@@ -23,22 +27,27 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
 
   // sorting
   const handleSort = () => {
-    const sortedData = [...filterData].sort((a, b) => {
+    const sorted = [...sortedData].sort((a, b) => {
       console.log("Props Data:", data)
-      console.log("Filtered Data:", filterData)
+      console.log("Filtered Data:", sortedData)
       if (sortDirection) {
         return a.name.localeCompare(b.name)
       } else {
         return b.name.localeCompare(a.name)
       }
     })
-    setFilteredData(sortedData)
+    setFilteredData(sorted)
     setSortDirection(!sortDirection)
   }
 
   const handlePageClick = (event) => {
     console.log("Page Clicked:", event.selected)
     setCurrentPage(event.selected)
+  }
+
+  const handleResetSort = () => {
+    setFilteredData(sortedData)
+    setSortDirection(true)
   }
 
   const currentItems = filterData.slice(
@@ -70,16 +79,32 @@ const DataTable = ({ data, filterData, setFilteredData }) => {
           />
         </Col>
       </Row>
+      <div className="d-flex justify-content-between my-2">
+        {/* Sort Button */}
+        <Button onClick={handleSort} variant="primary" size="sm">
+          Sort {sortDirection ? "↑" : "↓"}
+        </Button>
+
+        {/* Reset Sort Button */}
+        <Button onClick={handleResetSort} variant="secondary" size="sm">
+          Reset Sort
+        </Button>
+      </div>
 
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <th>User-ID</th>
+            <th>
+              User-ID
+              {/* <Button onClick={handleSort} variant="link" size="sm">
+                {sortDirection ? "↑" : "↓"}
+              </Button> */}
+            </th>
             <th>
               Name
-              <Button onClick={handleSort} variant="link" size="sm">
+              {/* <Button onClick={handleSort} variant="link" size="sm">
                 {sortDirection ? "↑" : "↓"}
-              </Button>
+              </Button> */}
             </th>
             <th>UserName</th>
             <th>Email</th>
